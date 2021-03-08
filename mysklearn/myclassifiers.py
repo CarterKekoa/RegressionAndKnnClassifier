@@ -33,7 +33,10 @@ class MySimpleLinearRegressor:
             y_train(list of numeric vals): The target y values (parallel to X_train) 
                 The shape of y_train is n_train_samples
         """
-        pass # TODO: fix this
+        m, b = myutils.compute_slope_intercept(X_train, y_train)
+        self.slope = m
+        self.intercept = b
+        pass 
 
     def predict(self, X_test):
         """Makes predictions for test samples in X_test.
@@ -47,7 +50,11 @@ class MySimpleLinearRegressor:
         Returns:
             y_predicted(list of numeric vals): The predicted target y values (parallel to X_test)
         """
-        return [] # TODO: fix this
+        y_predicted = []
+        for val in X_test:
+            prediction = (self.slope * val[0]) + self.intercept
+            y_predicted.append(prediction)
+        return y_predicted
 
 
 class MyKNeighborsClassifier:
@@ -103,8 +110,18 @@ class MyKNeighborsClassifier:
             neighbor_indices(list of list of int): 2D list of k nearest neighbor
                 indices in X_train (parallel to distances)
         """
-        return [], [] # TODO: fix this
+        scaled_X_train, scaled_X_test = myutils.scale(self.X_train, X_test)
+        
+        all_distances = []
+        all_indices = []
+        for val in scaled_X_test:
+            distance_list, indice_list = myutils.kneighbors_helper(scaled_X_train, val, self.n_neighbors)
+            all_distances.append(distance_list)
+            all_indices.append(indice_list)
+ 
+        return all_distances, all_indices
 
+    
     def predict(self, X_test):
         """Makes predictions for test instances in X_test.
 
@@ -115,4 +132,21 @@ class MyKNeighborsClassifier:
         Returns:
             y_predicted(list of obj): The predicted target y values (parallel to X_test)
         """
-        return [] # TODO: fix this
+        predictions = []
+        distance, indices = self.kneighbors(X_test)
+        labels = []
+
+        # for row in indices list
+        for row in indices:
+            temp = []
+            for i in row:
+                val = self.y_train[i]
+                temp.append(val)
+            labels.append(temp)
+ 
+        # for each row in labels
+        for row in labels:
+            predictions.append(myutils.get_label(row))
+ 
+        return predictions
+
