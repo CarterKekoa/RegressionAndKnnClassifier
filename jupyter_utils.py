@@ -2,6 +2,8 @@ import random
 from tabulate import tabulate
 
 def get_rand_rows(table, num_rows):
+    """This function will randomize the rows
+    """
     rand_rows = []
     for i in range(num_rows):
         rand_rows.append(table.data[random.randint(0,len(table.data))-1])
@@ -28,7 +30,9 @@ def get_rating(mpg):
         return 9
     return 10
 
-def count_correct(predicted, expected):
+def correct_count(predicted, expected):
+    """Counts the amount of correct  predictions
+    """
     count = 0
     assert len(predicted) == len(expected)
     for i in predicted:

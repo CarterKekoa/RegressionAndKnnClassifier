@@ -165,7 +165,7 @@ def confusion_matrix(y_true, y_pred, labels):
             matrix_row.append(0)
         matrix.append(matrix_row)
  
-    # for each each range  value in labels
+    # for each each range value in labels
     for i in range(len(labels)):
         label = labels[i]
         for j in range(len(y_true)):
