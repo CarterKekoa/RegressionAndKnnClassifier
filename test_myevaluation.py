@@ -28,7 +28,6 @@ def test_train_test_split():
             for seed in [0, 1, 2]:
                 X_train_solution, X_test_solution, y_train_solution, y_test_solution = train_test_split(X, y, test_size=test_size, random_state=seed, shuffle=False)
                 X_train, X_test, y_train, y_test = myevaluation.train_test_split(X, y, test_size=test_size, random_state=seed, shuffle=False)
-
                 assert np.array_equal(X_train, X_train_solution)
                 assert np.array_equal(X_test, X_test_solution)
                 assert np.array_equal(y_train, y_train_solution)

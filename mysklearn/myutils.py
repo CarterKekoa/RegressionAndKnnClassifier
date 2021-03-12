@@ -2,9 +2,10 @@ import numpy as np
 import mysklearn.mypytable as mypytable
 import operator
 import copy
+import random
 
 def mean(x):
-    """
+    """Computes the mean of a list of values
     """
     return sum(x)/len(x)
 
@@ -23,7 +24,6 @@ def compute_euclidean_distance(v1, v2):
     """
     """
     assert len(v1) == len(v2)
-
     dist = np.sqrt(sum([(v1[i] - v2[i]) ** 2 for i in range(len(v1))]))
     return dist
 
@@ -56,7 +56,7 @@ def scale(vals, test_vals):
     # returns all scaled values from the vals list, then the scaled values from the test_vals list
     return scaled_vals_list[:len(vals)], scaled_vals_list[len(vals):]
 
-def kneighbors_helper(scaled_X_train, scaled_X_test, n_neighbors):
+def kneighbors_prep(scaled_X_train, scaled_X_test, n_neighbors):
     """
     """
     scaled_X_train = copy.deepcopy(scaled_X_train)
@@ -110,3 +110,56 @@ def get_label(labels):
             label_prediction = label_types[i]
  
     return label_prediction
+
+def get_unique(vals):
+    """
+    """
+    unique = []
+    # for values in the vals list
+    for val in vals:
+        if val not in unique:
+            unique.append(val)
+    return unique
+
+def group_by(x_train, y_train):
+    """
+    """
+    unique = get_unique(y_train)
+    grouped = [[] for _ in unique]
+    # for each value in y_train
+    for i, val in enumerate(y_train):
+        for j, label in enumerate(unique):
+            if val == label:
+                grouped[j].append(i)
+    return grouped
+
+def shuffle(X, y):
+    """
+    """
+    for i in range(len(X)):
+        rand_index = random.randrange(0, len(X)) # [0, len(X))
+        X[i], X[rand_index] = X[rand_index], X[i] # this is the temporary value swap but in one line
+        if y is not None:
+            y[i], y[rand_index] = y[rand_index], y[i]
+
+def get_from_folds(X_vals, y_vals, train_folds, test_folds):
+    """
+    """
+    X_train = []
+    y_train = []
+    X_test = []
+    y_test = []
+
+    # for each fold
+    for row in train_folds:
+        for i in row:
+            X_train.append(X_vals[i])
+            y_train.append(y_vals[i])
+
+    # for each test fold
+    for row in test_folds:
+        for i in row:
+            X_test.append(X_vals[i])
+            y_test.append(y_vals[i])
+
+    return X_train, y_train, X_test, y_test

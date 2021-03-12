@@ -33,7 +33,33 @@ class MySimpleLinearRegressor:
             y_train(list of numeric vals): The target y values (parallel to X_train) 
                 The shape of y_train is n_train_samples
         """
-        m, b = myutils.compute_slope_intercept(X_train, y_train)
+        # New lists used for when the there is a nested list
+        new_list_x = []
+        new_list_y = []
+        # These will store true if there is a nested list passed through
+        use_new_x = any(isinstance(i, list) for i in X_train)
+        use_new_y = any(isinstance(i, list) for i in y_train)
+        
+        # if there exists a nested list
+        if (use_new_x and use_new_y):
+            for j in X_train:
+                new_list_x.append(j[0])
+            for k in y_train:
+                new_list_y.append(k[0])
+            m, b = myutils.compute_slope_intercept(new_list_x, new_list_y)
+        elif (use_new_x):
+            for j in X_train:
+                new_list_x.append(j[0])
+            m, b = myutils.compute_slope_intercept(new_list_x, y_train)
+        elif (use_new_y):
+            for j in y_train:
+                new_list_y.append(j[0])
+            m, b = myutils.compute_slope_intercept(X_train, new_list_y)
+        else:
+            # else there is no nested list
+            m, b = myutils.compute_slope_intercept(X_train, y_train)
+
+        # store the slope and intercept
         self.slope = m
         self.intercept = b
         pass 
@@ -51,7 +77,9 @@ class MySimpleLinearRegressor:
             y_predicted(list of numeric vals): The predicted target y values (parallel to X_test)
         """
         y_predicted = []
+        # for each value in the X_test list
         for val in X_test:
+            # y = mx + b equation
             prediction = (self.slope * val[0]) + self.intercept
             y_predicted.append(prediction)
         return y_predicted
@@ -110,15 +138,17 @@ class MyKNeighborsClassifier:
             neighbor_indices(list of list of int): 2D list of k nearest neighbor
                 indices in X_train (parallel to distances)
         """
+        # scale the list and test list
         scaled_X_train, scaled_X_test = myutils.scale(self.X_train, X_test)
         
         all_distances = []
         all_indices = []
+        # for each value in the scaled test list
         for val in scaled_X_test:
-            distance_list, indice_list = myutils.kneighbors_helper(scaled_X_train, val, self.n_neighbors)
+            # the prep gives us the distance and indice list 
+            distance_list, indice_list = myutils.kneighbors_prep(scaled_X_train, val, self.n_neighbors)
             all_distances.append(distance_list)
             all_indices.append(indice_list)
- 
         return all_distances, all_indices
 
     
